@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chilakluripet Assembly — Election Analysis 2014–2024</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  :root {
+    --tdp: #FF6B00;
+    --tdp-light: #FFF3E8;
+    --tdp-dark: #C94F00;
+    --ycp: #1A56DB;
+    --ycp-light: #EBF2FF;
+    --ycp-dark: #0F3A99;
+    --tie: #6B7280;
+    --bg: #F4F1EC;
+    --surface: #FEFCF8;
+    --surface2: #F0EDE7;
+    --border: #DDD9D0;
+    --text: #1A1611;
+    --text2: #5C5549;
+    --text3: #8C857C;
+    --accent: #8B0000;
+    --gold: #B8860B;
+  }
+
+  body {
+    font-family: 'Noto Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  .site-header {
+    background: var(--text);
+    color: var(--bg);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 56px;
+  }
+  .site-logo {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #F4F1EC;
+  }
+  .site-logo span { color: var(--tdp); }
+  .nav-tabs { display: flex; gap: 0; height: 100%; }
+  .nav-tab {
+    padding: 0 1.25rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: #B0A898;
+    transition: all 0.2s;
+    border-bottom: 3px solid transparent;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .nav-tab:hover { color: var(--bg); background: rgba(255,255,255,0.05); }
+  .nav-tab.active { color: var(--tdp); border-bottom-color: var(--tdp); }
+
+  /* HERO */
+  .hero {
+    background: var(--text);
+    color: var(--bg);
+    padding: 3rem 2rem 2rem;
+  }
+  .hero-inner { max-width: 1400px; margin: 0 auto; }
+  .hero-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(2rem, 5vw, 4rem);
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.01em;
+  }
+  .hero-title .state { color: var(--tdp); }
+  .hero-sub {
+    font-size: 0.9rem;
+    color: #8C857C;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .hero-stat {
+    background: rgba(255,255,255,0.04);
+    padding: 1.25rem 1.5rem;
+  }
+  .hero-stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8C857C;
+    margin-bottom: 0.4rem;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .hero-stat-value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--bg);
+  }
+  .hero-stat-value.tdp { color: var(--tdp); }
+  .hero-stat-value.ycp { color: #60A5FA; }
+
+  /* MAIN LAYOUT */
+  .main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--text);
+  }
+  .section-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .section-badge {
+    background: var(--text);
+    color: var(--bg);
+    padding: 2px 8px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+
+  /* OVERVIEW CARDS */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .village-card {
+    background: var(--surface);
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .village-card:hover { background: var(--surface2); }
+  .village-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+  .village-name {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+  .mandal-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text3);
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .voters-pill {
+    font-size: 0.7rem;
+    color: var(--text2);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 8px;
+    white-space: nowrap;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+  }
+  .year-rows { display: flex; flex-direction: column; gap: 4px; }
+  .year-row {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    align-items: center;
+    gap: 8px;
+  }
+  .year-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text3);
+    letter-spacing: 0.04em;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .vote-bar-wrap { position: relative; height: 12px; background: var(--surface2); border-radius: 2px; overflow: hidden; }
+  .vote-bar-tdp, .vote-bar-ycp {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    border-radius: 0;
+    transition: width 0.4s ease;
+  }
+  .vote-bar-tdp { left: 0; background: var(--tdp); }
+  .vote-bar-ycp { right: 0; background: var(--ycp); }
+  .winner-tag {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 1px 5px;
+    border-radius: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    white-space: nowrap;
+  }
+  .winner-tag.tdp { background: var(--tdp-light); color: var(--tdp-dark); }
+  .winner-tag.ycp { background: var(--ycp-light); color: var(--ycp-dark); }
+  .winner-tag.tie { background: #F3F4F6; color: var(--tie); }
+
+  /* TREND PAGE */
+  .trend-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  .filter-btn {
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--text2);
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover { border-color: var(--text); color: var(--text); }
+  .filter-btn.active { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  .trend-table-wrap { overflow-x: auto; }
+  .trend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .trend-table th {
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 12px;
+    text-align: left;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .trend-table th.tdp-h { color: var(--tdp); }
+  .trend-table th.ycp-h { color: #93C5FD; }
+  .trend-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  .trend-table tr:last-child td { border-bottom: none; }
+  .trend-table tr:hover td { background: var(--surface2); }
+  .trend-table .village-col { min-width: 160px; white-space: normal; }
+  .win-cell {
+    font-weight: 700;
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-family: 'Rajdhani', sans-serif;
+    display: inline-block;
+  }
+  .win-cell.tdp { background: var(--tdp-light); color: var(--tdp-dark); }
+  .win-cell.ycp { background: var(--ycp-light); color: var(--ycp-dark); }
+  .win-cell.tie { background: #F3F4F6; color: var(--tie); }
+  .swing-up { color: #16A34A; font-weight: 600; }
+  .swing-dn { color: #DC2626; font-weight: 600; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* CASTE PAGE */
+  .caste-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 2rem;
+  }
+  .caste-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .caste-card-header {
+    padding: 0.75rem 1rem;
+    background: var(--text);
+    color: var(--bg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .caste-card-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+  .caste-card-total {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    color: #8C857C;
+  }
+  .caste-list { padding: 0.5rem 0; }
+  .caste-row {
+    display: grid;
+    grid-template-columns: 120px 1fr 50px;
+    align-items: center;
+    padding: 4px 1rem;
+    gap: 8px;
+  }
+  .caste-name { font-size: 0.75rem; color: var(--text2); font-weight: 500; }
+  .caste-bar-wrap { height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .caste-bar { height: 100%; background: var(--text); border-radius: 3px; transition: width 0.4s; }
+  .caste-count { font-size: 0.72rem; color: var(--text3); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* CHART PAGE */
+  .chart-container {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .chart-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--text);
+  }
+  .bar-chart { display: flex; flex-direction: column; gap: 6px; }
+  .bar-row { display: flex; align-items: center; gap: 8px; }
+  .bar-village { font-size: 0.7rem; color: var(--text2); width: 140px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; display: flex; gap: 2px; height: 22px; border-radius: 2px; overflow: hidden; }
+  .bar-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: 700; color: white; overflow: hidden; transition: width 0.5s; }
+  .bar-seg.tdp { background: var(--tdp); }
+  .bar-seg.ycp { background: var(--ycp); }
+  .bar-year { font-size: 0.65rem; color: var(--text3); width: 32px; }
+
+  /* SEARCH */
+  .search-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-size: 0.85rem;
+    font-family: 'Noto Sans', sans-serif;
+    background: var(--surface);
+    margin-bottom: 1.25rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-box:focus { border-color: var(--text); }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    align-items: center;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.75rem;
+    color: var(--text2);
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+  }
+  .legend-dot.tdp { background: var(--tdp); }
+  .legend-dot.ycp { background: var(--ycp); }
+
+  /* SUMMARY BOX */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+  }
+  .summary-cell {
+    background: var(--surface);
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .summary-year {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.75rem;
+    color: var(--text3);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .summary-winner {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .summary-winner.tdp { color: var(--tdp-dark); }
+  .summary-winner.ycp { color: var(--ycp-dark); }
+  .summary-votes {
+    font-size: 0.75rem;
+    color: var(--text2);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text3);
+    font-size: 0.75rem;
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero-stats { grid-template-columns: repeat(2, 1fr); }
+    .main { padding: 1rem; }
+    .nav-tab { padding: 0 0.75rem; font-size: 0.7rem; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .bar-village { width: 100px; font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="site-logo">CHILAKLURIPET <span>ASSEMBLY</span></div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="showPage('overview')">Overview</button>
+      <button class="nav-tab" onclick="showPage('trend')">Trend Analysis</button>
+      <button class="nav-tab" onclick="showPage('caste')">Caste Profile</button>
+      <button class="nav-tab" onclick="showPage('charts')">Visual Charts</button>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-inner">
+    <p class="hero-sub">Andhra Pradesh · Palnadu District · Form 20 Data</p>
+    <h1 class="hero-title">Election Analysis<br><span class="state">2014 — 2019 — 2024</span></h1>
+    <div class="hero-stats" id="heroStats"></div>
+  </div>
+</div>
+
+<main class="main">
+  <!-- OVERVIEW PAGE -->
+  <div class="page active" id="overview">
+    <div class="section-header">
+      <h2 class="section-title">Village-wise Results</h2>
+      <span class="section-badge">52 Panchayats · 3 Elections</span>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><span class="legend-dot tdp"></span>TDP (NDA)</div>
+      <div class="legend-item"><span class="legend-dot ycp"></span>YSRCP (YCP)</div>
+    </div>
+    <input type="text" class="search-box" placeholder="Search village or mandal..." id="overviewSearch" oninput="filterOverview(this.value)">
+    <div class="overview-grid" id="overviewGrid"></div>
+  </div>
+
+  <!-- TREND PAGE -->
+  <div class="page" id="trend">
+    <div class="section-header">
+      <h2 class="section-title">Trend Analysis</h2>
+      <span class="section-badge">Vote Swing 2014–2024</span>
+    </div>
+    <div class="summary-grid" id="summaryGrid"></div>
+    <div class="trend-filters">
+      <button class="filter-btn active" onclick="filterTrend('all', this)">All Mandals</button>
+      <button class="filter-btn" onclick="filterTrend('NADENDLA', this)">Nadendla</button>
+      <button class="filter-btn" onclick="filterTrend('EDLAPADU', this)">Edlapadu</button>
+      <button class="filter-btn" onclick="filterTrend('CHILAKALURIPET', this)">Chilakaluripet</button>
+      <button class="filter-btn" onclick="filterTrend('tdp', this)">TDP Always Won</button>
+      <button class="filter-btn" onclick="filterTrend('ycp', this)">YSRCP Always Won</button>
+      <button class="filter-btn" onclick="filterTrend('swing', this)">Swing Villages</button>
+    </div>
+    <div class="trend-table-wrap">
+      <table class="trend-table" id="trendTable">
+        <thead>
+          <tr>
+            <th>Village</th>
+            <th>Mandal</th>
+            <th>Voters</th>
+            <th class="tdp-h">2024 TDP</th>
+            <th class="ycp-h">2024 YCP</th>
+            <th>2024 Result</th>
+            <th class="tdp-h">2019 TDP</th>
+            <th class="ycp-h">2019 YCP</th>
+            <th>2019 Result</th>
+            <th class="tdp-h">2014 TDP</th>
+            <th class="ycp-h">2014 YCP</th>
+            <th>2014 Result</th>
+            <th>Pattern</th>
+          </tr>
+        </thead>
+        <tbody id="trendBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CASTE PAGE -->
+  <div class="page" id="caste">
+    <div class="section-header">
+      <h2 class="section-title">Caste Composition</h2>
+      <span class="section-badge">Voter Demographics</span>
+    </div>
+    <input type="text" class="search-box" placeholder="Search village..." id="casteSearch" oninput="filterCaste(this.value)">
+    <div class="caste-grid" id="casteGrid"></div>
+  </div>
+
+  <!-- CHARTS PAGE -->
+  <div class="page" id="charts">
+    <div class="section-header">
+      <h2 class="section-title">Visual Charts</h2>
+      <span class="section-badge">Comparative View</span>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">2024 Vote Share by Village (TDP vs YSRCP)</div>
+      <div class="legend" style="margin-bottom:1rem">
+        <div class="legend-item"><span class="legend-dot tdp"></span>TDP votes</div>
+        <div class="legend-item"><span class="legend-dot ycp"></span>YSRCP votes</div>
+      </div>
+      <div class="bar-chart" id="voteShareChart"></div>
+    </div>
+    <div class="chart-container">
+      <div class="chart-title">Majority Margin — 2024 Election</div>
+      <div class="bar-chart" id="majorityChart"></div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  Chilakluripet Assembly Constituency · Form 20 Election Data Analysis · 2014, 2019 &amp; 2024 Elections<br>
+  Data sourced from official Form 20 returns · For informational purposes only
+</footer>
+
+<script>
+const DATA = [
+  {mandal:"NADENDLA",village:"SATHULURU",y24:{y:1977,t:3054,tot:5211},y19:{y:1136,t:1717,tot:2957},y14:{y:2166,t:2148,tot:4467},voters:5700,caste:{KAMMA:2000,VYSYA:500,VADDERA:500,MUSLIM:400,KAPU:400,MADIGA:350,MALA:300,YADAV:300,BUDABUKKALU:300,JANGALU:300,RAJAKA:200,YERIKA:200}},
+  {mandal:"NADENDLA",village:"KANUPARRU",y24:{y:1211,t:1809,tot:3085},y19:{y:1375,t:1582,tot:3053},y14:{y:1287,t:1507,tot:2868},voters:3265,caste:{KAMMA:930,MALA:800,VADDERA:600,MUSLIM:300,YERUKULA:250,RAJAKA:100,MADIGA:100,KUMMARI:50,YENADI:50}},
+  {mandal:"NADENDLA",village:"IRLAPADU",y24:{y:1679,t:2515,tot:4009},y19:{y:1933,t:1936,tot:3953},y14:{y:1649,t:2004,tot:3710},voters:1350,caste:{MALA:550,YADAV:500,KAPU:250,BRAHMIN:50}},
+  {mandal:"NADENDLA",village:"GANAPAVARAM",y24:{y:5038,t:6155,tot:11569},y19:{y:6094,t:5026,tot:11670},y14:{y:4875,t:5650,tot:10887},voters:15000,caste:{KAMMA:3000,KAPU:2200,MUSLIM:1500,MADIGA:1200,MALA:800,VADDERA:600,MUDIRAJ:600,RAJAKA:400,PADMASHALI:400,BATRAJULU:400,VYSYA:300,BRAHMIN:200,KUMMARI:200,REDDY:150,YENADULU:100,JANGAM:100,BOYA:50}},
+  {mandal:"NADENDLA",village:"NADENDLA",y24:{y:3088,t:5004,tot:8298},y19:{y:3252,t:4720,tot:8230},y14:{y:3047,t:4317,tot:7534},voters:8000,caste:{KAMMA:3600,MADIGA:1000,MALA:600,KAPU:500,YADAV:400,RAJAKA:350,VADDERA:300,KUMMARI:300,YERUKULA:200,YENADI:150,MUSLIM:100,VYSYA:80}},
+  {mandal:"NADENDLA",village:"THUBADU",y24:{y:1605,t:1551,tot:3237},y19:{y:1765,t:1367,tot:3212},y14:{y:1366,t:1360,tot:2836},voters:4500,caste:{MUSLIM:600,MADIGA:500,YADAV:500,REDDY:500,RAJAKA:300,MALA:250,DUDEKULA:250,KAPU:250,YERUKULA:200,KAMMA:200,VYSYA:200,YENADI:50}},
+  {mandal:"NADENDLA",village:"CHANDAVARAM",y24:{y:2077,t:2054,tot:4243},y19:{y:2163,t:1687,tot:4005},y14:{y:1919,t:1561,tot:3571},voters:2800,caste:{REDDY:850,MUSLIM:400,YADAV:350,MALA:300,MADIGA:250,RAJAKA:150,KAMMA:150,KAPU:150,YANADI:80,VYSYA:20}},
+  {mandal:"NADENDLA",village:"GORIJAVOLU",y24:{y:1326,t:951,tot:2303},y19:{y:1353,t:927,tot:2334},y14:{y:1133,t:950,tot:2135},voters:2650,caste:{MALA:600,REDDY:500,MADIGA:350,KAMMA:270,MUSLIM:180,VADDERA:130,VELAMA:60,RAJAKA:50,YADAV:50,YANADI:20,VYSYA:20,MUDIRAJ:15}},
+  {mandal:"NADENDLA",village:"SANKURATRIPADU",y24:{y:1360,t:1396,tot:2798},y19:{y:1469,t:1214,tot:2808},y14:{y:1267,t:1228,tot:2553},voters:2200,caste:{KAMMA:400,KAPU:400,YADAV:350,MALA:350,MADIGA:150,KUMMARI:150,VADDERA:70,REDDY:50,VYSYA:40}},
+  {mandal:"NADENDLA",village:"CHIRUMAMILLA",y24:{y:1339,t:726,tot:2118},y19:{y:1263,t:799,tot:2127},y14:{y:1143,t:703,tot:1898},voters:2350,caste:{MALA:600,REDDY:600,MADIGA:400,YADAV:200,MUSLIM:200,YERUKULA:120,TUGATI:80,YENADI:80,RAJAKA:70,JANGAM:30,KAMMA:20}},
+  {mandal:"EDLAPADU",village:"KONDAVEEDU",y24:{y:2201,t:3307,tot:5620},y19:{y:2833,t:2291,tot:5436},y14:{y:2623,t:2210,tot:4948},voters:6200,caste:{KAPU:2950,MUSLIM:1850,MALA:1000,YANADULU:600,MADIGA:453,MUDIRAJ:500,VYSYA:100,LAMBADI:50,KAMMA:50,VADDERA:50,YERAKULA:50,RAJAKA:20}},
+  {mandal:"EDLAPADU",village:"SOLASA",y24:{y:1684,t:1777,tot:3515},y19:{y:1837,t:1488,tot:3434},y14:{y:1598,t:1463,tot:3130},voters:3900,caste:{REDDY:1200,KAPU:800,KAMMA:700,MALA:200,MADIGA:200,RAJAKA:150,KUMMARI:100,YADAV:50,BOYA:40,MUSLIM:40,VADDERA:30}},
+  {mandal:"EDLAPADU",village:"MYDAVOLU",y24:{y:1414,t:1912,tot:3424},y19:{y:1619,t:1683,tot:3377},y14:{y:1541,t:1572,tot:3193},voters:4500,caste:{KAPU:1300,MUDIRAJ:1100,MALA:650,YADAV:220,KUMMARI:50,RAJAKA:40,VADDERA:40,MUSLIM:100,JANGAM:30,KAMMA:15}},
+  {mandal:"EDLAPADU",village:"VANKAYALAPADU",y24:{y:1943,t:2209,tot:4272},y19:{y:2275,t:1574,tot:3980},y14:{y:1360,t:886,tot:2301},voters:5200,caste:{MUSLIM:2000,VADDERA:1000,BOYA:500,MADIGA:400,MALA:200,LAMBADI:120,VYASA:100,YERUKULA:100,KAPU:60,BRAHMIN:60,KAMMA:20}},
+  {mandal:"EDLAPADU",village:"UNNAVA",y24:{y:1694,t:2171,tot:3959},y19:{y:1912,t:1810,tot:3902},y14:{y:2330,t:2469,tot:4922},voters:4950,caste:{KAMMA:900,MALA:600,MADIGA:650,KAPU:700,YADAVA:320,YERAKULA:270,BOYA:200,MUSLIM:60}},
+  {mandal:"EDLAPADU",village:"EDLAPADU",y24:{y:2696,t:4145,tot:7078},y19:{y:2596,t:2918,tot:5758},y14:{y:3076,t:3198,tot:6441},voters:7200,caste:{MALA:2650,KAMMA:1600,MUSLIM:765,KAPU:550,RAJAKA:260,MANGALI:230,MADIGA:170}},
+  {mandal:"EDLAPADU",village:"THIMMAPURAM",y24:{y:1573,t:2136,tot:3809},y19:{y:1689,t:2089,tot:3865},y14:{y:1540,t:1959,tot:3585},voters:4600,caste:{KAMMA:1600,MALA:1200,MADIGA:600,KUMMARI:250,YADAV:130,RAJAKA:80,MUSLIM:100,YANADULU:25,REDDY:30}},
+  {mandal:"EDLAPADU",village:"JALADI",y24:{y:1388,t:1762,tot:3196},y19:{y:1433,t:1699,tot:3203},y14:{y:1279,t:1527,tot:2865},voters:3840,caste:{MALA:1056,MADIGA:780,KAMMA:725,KAPU:380,RAJAKA:180,MANGALI:150,MUSLIM:155,VADDERA:50}},
+  {mandal:"EDLAPADU",village:"KARUCHOLA",y24:{y:1094,t:1080,tot:2241},y19:{y:1110,t:1070,tot:2220},y14:{y:966,t:981,tot:1997},voters:2300,caste:{MUSLIM:600,REDDYS:400,YADAV:300,MALA:250,MADIGA:250,MUDIRAJ:80,RAJAKA:80,KUMMARI:70}},
+  {mandal:"EDLAPADU",village:"THURLAPADU",y24:{y:532,t:742,tot:1308},y19:{y:601,t:718,tot:1360},y14:{y:557,t:734,tot:1343},voters:1650,caste:{KAMMA:850,MALA:480,RAJAKA:65,MADIGA:65,MUSLIM:45,VADDERA:50}},
+  {mandal:"EDLAPADU",village:"SANDEPUDI",y24:{y:423,t:829,tot:1270},y19:{y:455,t:840,tot:1328},y14:{y:487,t:804,tot:1313},voters:1300,caste:{KAMMA:850,MADIGA:130,MALA:120,RAJAKA:40,VYSYA:25,MANGALI:13,KUMMARI:10,VADDERA:10}},
+  {mandal:"CHILAKALURIPET",village:"KUKKAPALLIVARIPALEM",y24:{y:21,t:390,tot:415},y19:{y:47,t:358,tot:409},y14:{y:62,t:314,tot:382},voters:500,caste:{KAMMA:488,YANADI:6,BOYA:6}},
+  {mandal:"CHILAKALURIPET",village:"VELURU",y24:{y:1370,t:1651,tot:3149},y19:{y:1585,t:1385,tot:3090},y14:{y:1427,t:1424,tot:2967},voters:3900,caste:{MADIGA:1500,KAMMA:938,MUSLIM:650,MALA:200,RAJAKA:150,VADDERA:100,KUMMARI:100,CHENCHU:20,BRAHMIN:20}},
+  {mandal:"CHILAKALURIPET",village:"MANUKONDAVARIPALEM",y24:{y:881,t:848,tot:1778},y19:{y:993,t:804,tot:1837},y14:{y:899,t:816,tot:1739},voters:3400,caste:{REDDY:700,MALA:180,YERAKULA:160,KUMMARI:50,KAMSALI:40,KAPU:42,KAMMA:35,MADIGA:38}},
+  {mandal:"CHILAKALURIPET",village:"GOTTI PADU",y24:{y:542,t:1609,tot:2177},y19:{y:524,t:1616,tot:2185},y14:{y:560,t:1395,tot:2015},voters:2400,caste:{KAMMA:1000,MADIGA:550,VADDERA:300,MALA:192,KUMMARI:50,RAJAKA:30,MUSLIM:10,MANGALI:8}},
+  {mandal:"CHILAKALURIPET",village:"PASUMARRU",y24:{y:2049,t:2958,tot:5159},y19:{y:2402,t:2583,tot:5207},y14:{y:2280,t:2528,tot:4947},voters:5780,caste:{MUSLIM:1500,KAMMA:1160,MALA:650,MADIGA:600,YADAV:450,KAPU:350,VADDERA:350,RAJAKA:250,YERUKULA:200,KUMMARI:150,VYSYA:130,BRAHMIN:75}},
+  {mandal:"CHILAKALURIPET",village:"PURUSHOTHAPATNAM",y24:{y:1914,t:3160,tot:5335},y19:{y:3220,t:1598,tot:5178},y14:{y:2262,t:2900,tot:5399},voters:5442,caste:{KAPU:2450,MUSLIM:2000,YADAV:600,DUDEKULA:180,KUMMARI:100,OTHERS:100,RAJAKA:50}},
+  {mandal:"CHILAKALURIPET",village:"CHILAKALURIPETA URBAN",y24:{y:22201,t:37875,tot:62285},y19:{y:32509,t:26191,tot:61678},y14:{y:23295,t:26481,tot:52169},voters:103787,caste:{"BC-MUSLIM":24584,"SC-MALA":11358,"OC-KAPU":9684,"OC-VYSYA":8557,"OC-KAMMA":7394,"SC-MADIGA":5460,"ST-LAMBADI":4220,"BC-PADMASHALI":4107,"BC-VADDERA":4045,"BC-RAJAKA":3540,"BC-YADAV":3478,"OC-REDDY":2650}},
+  {mandal:"CHILAKALURIPET",village:"KAVURU",y24:{y:1870,t:2930,tot:4965},y19:{y:2169,t:2799,tot:5221},y14:{y:1906,t:2613,tot:4494},voters:5750,caste:{KAMMA:2700,MALA:600,MUSLIM:525,VADDERA:400,KUMMARI:250,RAJAKA:230,PADMASHALI:180,KAPU:150,LAMBADI:150,YADAV:80,MADIGA:70,YERUKULA:50,JANGAM:50,VYSYA:20}},
+  {mandal:"CHILAKALURIPET",village:"GOVINDAPURAM",y24:{y:1905,t:3029,tot:5025},y19:{y:2344,t:2651,tot:4980},y14:{y:2152,t:2486,tot:5076},voters:5565,caste:{KAMMA:1680,MALA:1055,MADIGA:900,YADAV:425,KAPU:360,GOUDA:180,MUDIRAJ:130,YERAKULA:110,RAJAKA:105,LAMBADIES:102,MUSLIM:70}},
+  {mandal:"CHILAKALURIPET",village:"EDAVALLI",y24:{y:1306,t:1658,tot:3047},y19:{y:1053,t:731,tot:1979},y14:{y:1561,t:1109,tot:2531},voters:3700,caste:{KAPU:1400,YADAV:450,KAMMA:400,MADIGA:350,VADDERA:230,PADMASHALI:200,YERUKULA:100,YENADI:100,RAJAKA:70,KUMMARI:60}},
+  {mandal:"CHILAKALURIPET",village:"RAJAPETA/MADDIRALA",y24:{y:313,t:637,tot:960},y19:{y:317,t:613,tot:968},y14:{y:332,t:574,tot:687},voters:1600,caste:{KAMMA:480,MUSLIM:380,KUMMARI:80,RAJAKA:50,YENADI:20,MANGALI:10}},
+  {mandal:"CHILAKALURIPET",village:"POTHAVARAM",y24:{y:532,t:583,tot:1157},y19:{y:705,t:496,tot:1249},y14:{y:579,t:579,tot:929},voters:1600,caste:{MUSLIM:1000,KAPU:150,KAMMA:100,PADMASHALI:50,VYSYA:30,BRAHMIN:20}},
+  {mandal:"CHILAKALURIPET",village:"BOPPUDI",y24:{y:1759,t:1614,tot:3488},y19:{y:2056,t:1298,tot:3469},y14:{y:1647,t:1303,tot:3696},voters:4500,caste:{MUSLIM:1950,MADIGA:680,KAMMA:420,VADDERA:365,KAPU:250,CHANCHU:198,KAMSALI:185,YERAKULA:145,CHAKALI:140,MANGALI:138,KUMMARI:120,YADAV:155}},
+  {mandal:"CHILAKALURIPET",village:"RAJAPETA",y24:{y:897,t:1160,tot:2096},y19:{y:930,t:1070,tot:2056},y14:{y:869,t:1008,tot:1211},voters:2350,caste:{MALA:460,MADIGA:395,MUSLIM:350,KAMMA:320,YADAV:265,RAJAKA:180,KAPU:70,YERUKULA:50,PADMASHALI:50}},
+  {mandal:"CHILAKALURIPET",village:"MURIKIPUDI",y24:{y:1969,t:2156,tot:4254},y19:{y:2227,t:1896,tot:4267},y14:{y:2034,t:1851,tot:3992},voters:4950,caste:{MUDIRAJ:1700,MADIGA:720,MALA:650,MUSLIM:400,KAMMA:380,YERUKULA:370,VADDERA:200,KAPU:200,RAJAKA:165,MANGALI:60,VYSYA:50,BRAHMIN:50,YENADI:50}},
+  {mandal:"CHILAKALURIPET",village:"THATAPUDI",y24:{y:165,t:278,tot:454},y19:{y:201,t:291,tot:499},y14:{y:214,t:241,tot:462},voters:500,caste:{KAMMA:210,MALA:180,VADDERA:50}}
+];
+
+function winner(d,yr){
+  const e=d[yr];
+  if(e.t>e.y) return 'tdp';
+  if(e.y>e.t) return 'ycp';
+  return 'tie';
+}
+function majority(d,yr){
+  const e=d[yr];
+  return Math.abs(e.t-e.y);
+}
+
+// Compute aggregate hero stats
+function buildHeroStats(){
+  const stats = [
+    {label:'Total Panchayats',value:'52'},
+    {label:'Total Voters (2024)',value:'2,26,867'},
+    {label:'2024 Winner',value:'TDP',cls:'tdp'},
+    {label:'2024 TDP — Prathipati Pulla Rao',value:'1,11,062  (56.84%)',cls:'tdp'},
+    {label:'2024 YCP — Kavati Siva Naga Manohar',value:'77,800  (39.82%)',cls:'ycp'},
+    {label:'2024 TDP Majority',value:'33,262  (17.02%)',cls:'tdp'},
+  ];
+  const el=document.getElementById('heroStats');
+  el.innerHTML = stats.map(s=>`<div class="hero-stat"><div class="hero-stat-label">${s.label}</div><div class="hero-stat-value ${s.cls||''}" style="font-size:${s.value.length>12?'1.1rem':'1.8rem'}">${s.value}</div></div>`).join('');
+}
+
+// BUILD OVERVIEW
+function buildOverview(filter=''){
+  const f=filter.toLowerCase();
+  const grid=document.getElementById('overviewGrid');
+  const filtered=DATA.filter(d=>!f||d.village.toLowerCase().includes(f)||d.mandal.toLowerCase().includes(f));
+  grid.innerHTML=filtered.map(d=>{
+    const years=[{yr:'y24',label:'24'},{yr:'y19',label:'19'},{yr:'y14',label:'14'}];
+    const rows=years.map(({yr,label})=>{
+      const e=d[yr]; const tot=e.tot||1;
+      const tp=Math.round(e.t/tot*100); const yp=Math.round(e.y/tot*100);
+      const w=winner(d,yr);
+      return `<div class="year-row">
+        <span class="year-label">'${label}</span>
+        <div class="vote-bar-wrap">
+          <div class="vote-bar-tdp" style="width:${tp}%"></div>
+          <div class="vote-bar-ycp" style="width:${yp}%; left:auto; right:0;"></div>
+        </div>
+        <span class="winner-tag ${w}">${w==='tdp'?'TDP':w==='ycp'?'YCP':'TIE'} +${majority(d,yr).toLocaleString()}</span>
+      </div>`;
+    }).join('');
+    return `<div class="village-card">
+      <div class="village-card-header">
+        <div><div class="mandal-tag">${d.mandal}</div><div class="village-name">${d.village}</div></div>
+        <span class="voters-pill">${d.voters.toLocaleString('en-IN')} voters</span>
+      </div>
+      <div class="year-rows">${rows}</div>
+    </div>`;
+  }).join('');
+}
+function filterOverview(v){ buildOverview(v); }
+
+// BUILD SUMMARY
+function buildSummary(){
+  const el=document.getElementById('summaryGrid');
+  const OFFICIAL=[
+    {yr:2024,w:'tdp',wl:'TDP Won',winner:'Prathipati Pulla Rao',wvotes:'1,11,062',wpct:'56.84',runner:'Kavati Siva Naga Manohar Naidu (YSRCP)',rvotes:'77,800',rpct:'39.82',maj:'33,262',majpct:'17.02'},
+    {yr:2019,w:'ycp',wl:'YSRCP Won',winner:'Vidadala Rajini',wvotes:'94,430',wpct:'50.20',runner:'Prathipati Pulla Rao (TDP)',rvotes:'86,129',rpct:'45.79',maj:'8,301',majpct:'4.43'},
+    {yr:2014,w:'tdp',wl:'TDP Won',winner:'Prathipati Pulla Rao',wvotes:'89,591',wpct:'51.70',runner:'Marri Rajasekhar (YSRCP)',rvotes:'78,907',rpct:'45.50',maj:'10,684',majpct:'6.20'},
+  ];
+  el.innerHTML=OFFICIAL.map(o=>`<div class="summary-cell">
+    <div class="summary-year">${o.yr} Election</div>
+    <div class="summary-winner ${o.w}">${o.wl}</div>
+    <div style="font-family:'Rajdhani',sans-serif;font-weight:700;font-size:0.95rem;margin:6px 0 2px;color:var(--text)">${o.winner}</div>
+    <div style="font-size:0.78rem;color:var(--${o.w==='tdp'?'tdp-dark':'ycp-dark'});font-weight:600;margin-bottom:6px">${o.wvotes} votes &nbsp;·&nbsp; ${o.wpct}%</div>
+    <div style="font-size:0.72rem;color:var(--text3);line-height:1.5">${o.runner}<br>${o.rvotes} votes (${o.rpct}%)</div>
+    <div style="margin-top:6px;font-size:0.75rem;font-weight:700;font-family:'Rajdhani',sans-serif;color:var(--text2)">Majority: ${o.maj} &nbsp;(${o.majpct}%)</div>
+  </div>`).join('');
+}
+
+// BUILD TREND TABLE
+let currentTrendFilter='all';
+function buildTrendTable(filterType='all'){
+  currentTrendFilter=filterType;
+  let filtered=DATA;
+  if(filterType==='NADENDLA'||filterType==='EDLAPADU'||filterType==='CHILAKALURIPET'){
+    filtered=DATA.filter(d=>d.mandal===filterType);
+  } else if(filterType==='tdp'){
+    filtered=DATA.filter(d=>winner(d,'y24')==='tdp'&&winner(d,'y19')==='tdp'&&winner(d,'y14')==='tdp');
+  } else if(filterType==='ycp'){
+    filtered=DATA.filter(d=>winner(d,'y24')==='ycp'&&winner(d,'y19')==='ycp'&&winner(d,'y14')==='ycp');
+  } else if(filterType==='swing'){
+    filtered=DATA.filter(d=>{
+      const winners=new Set([winner(d,'y24'),winner(d,'y19'),winner(d,'y14')]);
+      return winners.size>1;
+    });
+  }
+
+  const tbody=document.getElementById('trendBody');
+  tbody.innerHTML=filtered.map(d=>{
+    const w24=winner(d,'y24'),w19=winner(d,'y19'),w14=winner(d,'y14');
+    const pattern=[w14,w19,w24].map(w=>w==='tdp'?'T':w==='ycp'?'Y':'=').join('→');
+    const swingClass = w24!==w19?'swing-up':'';
+    const swing24 = w24!==w19?`<span class="${w24==='tdp'?'swing-up':'swing-dn'}">${w24==='tdp'?'▲TDP':'▲YCP'}</span>`:'–';
+    return `<tr>
+      <td class="village-col">${d.village}</td>
+      <td>${d.mandal}</td>
+      <td class="num">${d.voters.toLocaleString('en-IN')}</td>
+      <td class="num">${d.y24.t.toLocaleString('en-IN')}</td>
+      <td class="num">${d.y24.y.toLocaleString('en-IN')}</td>
+      <td><span class="win-cell ${w24}">${w24==='tdp'?'TDP':w24==='ycp'?'YCP':'TIE'} +${majority(d,'y24').toLocaleString()}</span></td>
+      <td class="num">${d.y19.t.toLocaleString('en-IN')}</td>
+      <td class="num">${d.y19.y.toLocaleString('en-IN')}</td>
+      <td><span class="win-cell ${w19}">${w19==='tdp'?'TDP':w19==='ycp'?'YCP':'TIE'} +${majority(d,'y19').toLocaleString()}</span></td>
+      <td class="num">${d.y14.t.toLocaleString('en-IN')}</td>
+      <td class="num">${d.y14.y.toLocaleString('en-IN')}</td>
+      <td><span class="win-cell ${w14}">${w14==='tdp'?'TDP':w14==='ycp'?'YCP':'TIE'} +${majority(d,'y14').toLocaleString()}</span></td>
+      <td style="font-family:'Rajdhani',sans-serif;font-weight:700;letter-spacing:0.05em;color:var(--text2)">${pattern} ${swing24}</td>
+    </tr>`;
+  }).join('');
+}
+function filterTrend(type, btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  buildTrendTable(type);
+}
+
+// BUILD CASTE
+function buildCaste(filter=''){
+  const f=filter.toLowerCase();
+  const grid=document.getElementById('casteGrid');
+  const filtered=DATA.filter(d=>!f||d.village.toLowerCase().includes(f)||d.mandal.toLowerCase().includes(f));
+  grid.innerHTML=filtered.map(d=>{
+    const sorted=Object.entries(d.caste).sort((a,b)=>b[1]-a[1]);
+    const maxVal=sorted[0]?sorted[0][1]:1;
+    const rows=sorted.map(([name,count])=>`<div class="caste-row">
+      <span class="caste-name">${name}</span>
+      <div class="caste-bar-wrap"><div class="caste-bar" style="width:${Math.round(count/maxVal*100)}%"></div></div>
+      <span class="caste-count">${count.toLocaleString('en-IN')}</span>
+    </div>`).join('');
+    return `<div class="caste-card">
+      <div class="caste-card-header">
+        <div class="caste-card-title">${d.village}</div>
+        <span class="caste-card-total">${d.mandal} · ${d.voters.toLocaleString('en-IN')} voters</span>
+      </div>
+      <div class="caste-list">${rows}</div>
+    </div>`;
+  }).join('');
+}
+function filterCaste(v){ buildCaste(v); }
+
+// BUILD CHARTS
+function buildCharts(){
+  const sorted=[...DATA].sort((a,b)=>(b.y24.t+b.y24.y)-(a.y24.t+a.y24.y));
+  const voteChart=document.getElementById('voteShareChart');
+  voteChart.innerHTML=sorted.map(d=>{
+    const tot=d.y24.tot||1;
+    const tp=Math.round(d.y24.t/tot*100);
+    const yp=Math.round(d.y24.y/tot*100);
+    return `<div class="bar-row">
+      <span class="bar-village">${d.village.length>18?d.village.substr(0,18)+'…':d.village}</span>
+      <div class="bar-track">
+        <div class="bar-seg tdp" style="width:${tp}%">${tp>8?tp+'%':''}</div>
+        <div class="bar-seg ycp" style="width:${yp}%">${yp>8?yp+'%':''}</div>
+      </div>
+      <span class="bar-year">${d.y24.tot.toLocaleString()}</span>
+    </div>`;
+  }).join('');
+
+  // Majority chart
+  const mSorted=[...DATA].sort((a,b)=>Math.abs(b.y24.t-b.y24.y)-Math.abs(a.y24.t-a.y24.y)).slice(0,20);
+  const maxMaj=Math.max(...mSorted.map(d=>Math.abs(d.y24.t-d.y24.y)));
+  const majChart=document.getElementById('majorityChart');
+  majChart.innerHTML=mSorted.map(d=>{
+    const maj=Math.abs(d.y24.t-d.y24.y);
+    const w=winner(d,'y24');
+    const pct=Math.round(maj/maxMaj*100);
+    return `<div class="bar-row">
+      <span class="bar-village">${d.village.length>18?d.village.substr(0,18)+'…':d.village}</span>
+      <div class="bar-track" style="height:22px; background:var(--surface2)">
+        <div class="bar-seg ${w}" style="width:${pct}%">${pct>10?'+'+maj.toLocaleString():''}</div>
+      </div>
+      <span class="bar-year" style="font-size:0.7rem;color:var(--${w==='tdp'?'tdp':'ycp'})">${w.toUpperCase()}</span>
+    </div>`;
+  }).join('');
+}
+
+// PAGE NAVIGATION
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// INIT
+buildHeroStats();
+buildOverview();
+buildSummary();
+buildTrendTable();
+buildCaste();
+buildCharts();
+</script>
+</body>
+</html>
